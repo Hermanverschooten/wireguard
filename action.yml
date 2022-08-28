@@ -2,7 +2,7 @@ name: WireGuard connection
 description: Set up WireGuard connection
 
 inputs:
-  endpoint:
+  config:
     description: WireGuard Configuration file
     required: true
 
@@ -10,9 +10,12 @@ runs:
   using: composite
   steps:
     - run: |
+        readonly config='${{ inputs.config }}'
         DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update 
-        DEBIAN_FRONTEND=noninteractive apt-get -yqq install wireguard
-        cat '${{ secrets.WIREGUARD }}' > /etc/wireguard/github.conf
+        DEBIAN_FRONTEND=noninteractive sudo apt-get -yqq install wireguard
+        sudo mkdir -p /etc/wireguard
+        echo "$config" > github.conf
+        sudo cp github.conf /etc/wireguard/
         sudo wg-quick up github || exit 1
       shell: bash
 branding:
