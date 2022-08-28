@@ -1,0 +1,20 @@
+name: WireGuard connection
+description: Set up WireGuard connection
+
+inputs:
+  endpoint:
+    description: WireGuard Configuration file
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - run: |
+        DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update 
+        DEBIAN_FRONTEND=noninteractive apt-get -yqq install wireguard
+        cat '${{ secrets.WIREGUARD }}' > /etc/wireguard/github.conf
+        sudo wg-quick up github || exit 1
+      shell: bash
+branding:
+  icon: star
+  color: blue
